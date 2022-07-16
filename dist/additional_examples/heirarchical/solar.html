@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>CS 4280: Computer Graphics</title>
+  <style>
+    canvas { border: 1px solid white; }
+    .column { float: left;}
+    .row:after {content: ""; display: table; clear: both;}
+    .left { width: 70%;}
+    .right { width: 30%; }
+    ul { list-style: none; width: 100%; padding-left: 0px;}
+    ul li { float: left; width: 50%;} 
+    ul li.label:before {content: "   "; white-space: pre;}
+    br{ clear: left; } 
+  </style>
+</head>
+
+<body>
+  <div class="row">
+    <div class="column left">
+      <canvas id="webgl-scene" width="800" height="800">
+        Your browser does not support HTML5.
+      </canvas>
+    </div>
+    <div class="column right" style="font-family: courier;">
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/2.4.0/gl-matrix-min.js"></script>
+  <script src="../webgl_helper.js"></script>
+
+  <!-- Vertex Shader -->
+  <script id='shader-vs' type='x-shader/x-vertex'>
+    attribute vec3 coordinates;
+
+    uniform mat4 modelView;
+    uniform mat4 projection;
+    void main(void) {      
+      gl_Position = projection * modelView * vec4(coordinates, 1.0);
+    }
+  </script>
+  <!-- Fragment Shader -->
+  <script id='shader-fs' type='x-shader/x-fragment'>
+    precision mediump float;
+    uniform vec4 color;
+    void main(void) {                            
+      gl_FragColor = color;
+    }
+  </script>
+
+  <script>
+    $(document).ready(function(){
+      function circle(){
+        var vertices = [0.0, 0.0, 0.0];
+        var circlePoints = 40;
+        var theta = Math.PI * 2 / circlePoints;
+        for(var i = 0; i <= circlePoints; i++){
+          vertices.push(Math.cos(theta * i) * 0.2);
+          vertices.push(Math.sin(theta * i) * 0.2);
+          vertices.push(0.0);
+        }
+        return { 
+          vertices: vertices, 
+          eye: [0, 0, 0], 
+          at: [0, 0, 0], 
+          up: [0, 1, 0],
+          ortho: [-1, 1, -1, 1, -1, 1] 
+        };
+      }
+      
+      function createNode(translate, scale, rotate, theta, color){
+        return { 
+          translate: translate, 
+          scale: scale, 
+          rotate: rotate, theta: theta, // Initialy rotated by rotate 
+                                        // degrees and then increment 
+                                        // rotation by theta degrees
+          children: [], color: color, 
+          render: function(model, view, projection){
+            var s = mat4.fromScaling(mat4.create(), scale);
+            var newModel = mat4.mul(mat4.create(), model, s);
+            var modelView = mat4.mul(mat4.create(), view, newModel);
+            gl.uniformMatrix4fv(modelViewLoc, false, modelView);
+            gl.uniformMatrix4fv(projectionLoc, false, projection);
+            gl.uniform4fv(colorLoc, new Float32Array(color)); 
+            gl.drawArrays(gl.TRIANGLE_FAN, 0, object.vertices.length / 3);
+          }
+        };
+      }
+      
+      // Creating the hierarchy
+      var sun = createNode([0, 0 , 0], [.6, .6, .6], 0, 0, [1,1,0,1]);
+      var earth =  createNode([.0, .4 , 0], [.3, .3, 0], 0, 1, [1,0,1,1]);
+      var moon = createNode([0, .1, 0], [.1, .1, 0], 0, 2, [0,0,1,1]);
+      
+      var root = sun;
+      sun.children.push(earth);
+      earth.children.push(moon);
+      
+      // Recursively traversing the hierarchy
+      function render(node, model){
+        var t = mat4.fromTranslation(mat4.create(), node.translate);
+        var r = mat4.create(), rt = mat4.create();
+        if(node.theta > 0){
+          node.rotate += node.theta;
+          r = mat4.fromRotation(r, glMatrix.toRadian(node.rotate), [0, 0, 1]);
+          rt = mat4.mul(rt, r, t);
+        }else{
+          rt = t;
+        }
+        
+        model = model || mat4.create();
+        var newModel = mat4.mul(mat4.create(), model, rt);
+        node.render(newModel, view, projection);
+        
+        node.children.forEach(function(child){
+          render(child, newModel);
+        });
+      }
+
+      var canvas = $("#webgl-scene")[0];
+      var gl = initWebGL(canvas);
+      var program = initShaders(gl, $("#shader-vs").text(), $("#shader-fs").text());
+      gl.useProgram(program);
+      clear(gl, [1.0, 1.0, 1.0, 1.0]);
+      
+      var object = circle();
+      var buffers = initBuffers(gl, program, [{
+          name: "coordinates", 
+          size: 3, 
+          data: object.vertices
+        }]);
+
+      var modelViewLoc = gl.getUniformLocation(program, "modelView"); 
+      var projectionLoc = gl.getUniformLocation(program, "projection"); 
+      var colorLoc = gl.getUniformLocation(program, "color");
+      
+      var view = mat4.lookAt(mat4.create(), object.eye, object.at, object.up);
+      var projection = mat4.ortho (mat4.create(), object.ortho[0], object.ortho[1], 
+        object.ortho[2], object.ortho[3], object.ortho[4], object.ortho[5]);
+        
+      function animate(time){
+        render(root);
+        window.requestAnimationFrame(animate);
+      }
+
+      animate(0);
+    });
+  </script>
+</body>
+</html>

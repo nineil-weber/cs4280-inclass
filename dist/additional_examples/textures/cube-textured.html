@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>CS 4280: Computer Graphics</title>
+  <style>
+    canvas { border: 1px solid white; }
+    .column { float: left;}
+    .row:after {content: ""; display: table; clear: both;}
+    .left { width: 70%;}
+    .right { width: 30%; }
+    ul { list-style: none; width: 100%; padding-left: 0px;}
+    ul li { float: left; width: 50%;} 
+    ul li.label:before {content: "   "; white-space: pre;}
+    br{ clear: left; } 
+  </style>
+</head>
+
+<body>
+  <div class="row">
+    <div class="column left">
+      <canvas id="webgl-scene" width="800" height="800">
+        Your browser does not support HTML5.
+      </canvas>
+    </div>
+    <div class="column right" style="font-family: courier;">
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/2.4.0/gl-matrix-min.js"></script>
+  <script src="../honolulu-data.js"></script>
+  <script src="../webgl_helper.js"></script>
+  <script src="cube.js"></script>
+  <script src="../lighting/sphere.js"></script>
+  <script src="../lighting/sphere2.js"></script>
+  <script src="../lighting/sombrero.js"></script>
+  <script src="../lighting/honolulu.js"></script>
+  <!-- Vertex Shader -->
+  <script id='shader-vs' type='x-shader/x-vertex'>
+    attribute vec3 coordinates;
+    attribute vec2 texCoords;
+    
+    uniform mat4 modelView;
+    uniform mat4 projection;
+
+    varying vec2 fTexCoords;
+    void main(void) {      
+      gl_Position = projection * modelView * vec4(coordinates, 1.0);
+      fTexCoords = texCoords;
+    }
+  </script>
+  <!-- Fragment Shader -->
+  <script id='shader-fs' type='x-shader/x-fragment'>
+    precision mediump float;
+    varying vec2 fTexCoords;
+    uniform sampler2D texture;
+    void main(void) {            
+      gl_FragColor = vec4(.5, .8, .5, 1.) * texture2D(texture, fTexCoords);
+    }
+  </script>
+
+  <script>
+    $(document).ready(function(){      
+      var canvas = $("#webgl-scene")[0];
+      var gl = initWebGL(canvas);
+      var program = initShaders(gl, $("#shader-vs").text(), $("#shader-fs").text());
+      gl.useProgram(program);
+      clear(gl, [1.0, 1.0, 1.0, 1.0]);
+      
+      var object = cube();
+      var buffers = initBuffers(gl, program, [{
+          name: "coordinates", 
+          size: 3, 
+          data: object.vertices
+        }, {
+          name: "texCoords", 
+          size: 2, 
+          data: object.texCoords
+        }
+      ]);
+
+      loadTexturesFromUrls(gl, program, [{
+        url: "wildcats.jpg",
+        sampler2D: [gl.TEXTURE0, "texture", 0]
+      }]);
+            
+      var modelViewLoc = gl.getUniformLocation(program, "modelView"); 
+      var projectionLoc = gl.getUniformLocation(program, "projection"); 
+      
+      var theta = 0;
+      function animate(time){
+        theta += object.theta;
+        var t = mat4.fromTranslation(mat4.create(), object.translate);
+        var s = mat4.fromScaling(mat4.create(), object.scale);
+        var st = mat4.mul(mat4.create(), s, t);
+        var r = mat4.fromRotation(mat4.create(), glMatrix.toRadian(theta), object.axis);
+        var model = mat4.mul(mat4.create(), r, st);
+        
+        var view = mat4.lookAt(mat4.create(), object.eye, object.at, object.up);
+        var projection = mat4.ortho (mat4.create(), object.ortho[0], object.ortho[1], 
+          object.ortho[2], object.ortho[3], object.ortho[4], object.ortho[5]);
+          
+        gl.uniformMatrix4fv(modelViewLoc, false, mat4.mul(mat4.create(), view, model));
+        gl.uniformMatrix4fv(projectionLoc, false, projection);
+        
+        gl.drawArrays(gl.TRIANGLES, 0, object.vertices.length / 3);
+        
+        window.requestAnimationFrame(animate);
+      }
+      
+      animate(0);
+    });
+  </script>
+</body>
+</html>

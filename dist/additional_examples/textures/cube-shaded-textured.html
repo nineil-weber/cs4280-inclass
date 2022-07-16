@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>CS 4280: Computer Graphics</title>
+  <style>
+    canvas { border: 1px solid white; }
+    .column { float: left;}
+    .row:after {content: ""; display: table; clear: both;}
+    .left { width: 70%;}
+    .right { width: 30%; }
+    ul { list-style: none; width: 100%; padding-left: 0px;}
+    ul li { float: left; width: 50%;} 
+    ul li.label:before {content: "   "; white-space: pre;}
+    br{ clear: left; } 
+  </style>
+</head>
+
+<body>
+  <div class="row">
+    <div class="column left">
+      <canvas id="webgl-scene" width="800" height="800">
+        Your browser does not support HTML5.
+      </canvas>
+    </div>
+    <div class="column right" style="font-family: courier;">
+      <h2>Controls</h2>
+      <ul>
+        <li class="header"><strong>Light Position</strong> [-1, 1]</li><li>&nbsp;</li>
+        <li class="label">X</li>
+        <li><input type="range" data-var="lposX" value="1" min="-1" max="1" step=".1"></li>
+        <li class="label">Y</li>
+        <li><input type="range" data-var="lposY" value="1" min="-1" max="1" step=".1"></li>
+        <li class="label">Z</li>
+        <li><input type="range" data-var="lposZ" value="1" min="-1" max="1" step=".1"></li> 
+        
+        <li class="header"><strong>Coefficients</strong> [0, 1]</li><li>&nbsp;</li>
+        <li class="label">Ka</li>
+        <li><input type="range" data-var="ka" value="1" min="0" max="1" step=".05"></li>
+        <li class="label">Kd</li>
+        <li><input type="range" data-var="kd" value="1" min="0" max="1" step=".05"></li>
+        <li class="label">Ks</li>
+        <li><input type="range" data-var="ks" value="1" min="0" max="1" step=".05"></li>
+        <li class="header"><strong>Shininess</strong>  [0, 500]</li><li>&nbsp;</li>
+        <li class="label">&nbsp;</li>
+        <li><input type="range" data-var="shininess" value="100" min="0" max="500" step="5"></li>
+        
+        <li class="header"><strong>Light Colors</strong></li><li>&nbsp;</li>
+        <li class="label">Ambient</li>
+        <li><input type="color" value="#330033"  data-var="ambient"></li>
+        <li class="label">Diffuse</li>
+        <li><input type="color" value="#FFCC00"  data-var="diffuse"></li>
+        <li class="label">Specular</li>
+        <li><input type="color" value="#FFCC00"  data-var="specular"></li>
+        
+        <!--<li class="header"><strong>Model</strong></li><li>&nbsp;</li>
+        <li class="label">Cube</li>
+        <li><input class="radio" type="radio" name="model" value="cube()" checked/></li>
+        <li class="label">Sphere</li>
+        <li><input class="radio" type="radio" name="model" value="sphere(.7, 128, 128)"/></li>
+        <li class="label">Sphere 2</li>
+        <li><input class="radio" type="radio" name="model" value="sphere2(5)"/></li>
+        <li class="label">Sombrero</li>
+        <li><input class="radio" type="radio" name="model" value="sombrero(128, 128)"/></li>
+        <li class="label">Honolulu</li>
+        <li><input class="radio" type="radio" name="model" value="honolulu(128, 128)"/></li>-->
+      </ul>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/2.4.0/gl-matrix-min.js"></script>
+  <script src="../honolulu-data.js"></script>
+  <script src="../webgl_helper.js"></script>
+  <script src="cube.js"></script>
+  <script src="../lighting/sphere.js"></script>
+  <script src="../lighting/sphere2.js"></script>
+  <script src="../lighting/sombrero.js"></script>
+  <script src="../lighting/honolulu.js"></script>
+  <!-- Vertex Shader -->
+  <script id='shader-vs' type='x-shader/x-vertex'>
+    attribute vec3 coordinates;
+    attribute vec3 normals;
+    attribute vec2 texCoords;
+    
+    uniform mat4 modelView;
+    uniform mat4 projection;
+    
+    varying vec4 vVertPos;
+    varying vec4 vNormals;
+    varying vec2 fTexCoords;
+    void main(void) {      
+      gl_Position = projection * modelView * vec4(coordinates, 1.0);
+      vVertPos = modelView * vec4(coordinates, 1.0);
+      vNormals = modelView * vec4(normals, 0.0);
+      fTexCoords = texCoords;
+    }
+  </script>
+  <!-- Fragment Shader -->
+  <script id='shader-fs' type='x-shader/x-fragment'>
+    precision mediump float;
+    varying vec4 vVertPos;
+    varying vec4 vNormals;
+    varying vec2 fTexCoords;
+        
+    uniform vec3 lightPosition;
+    uniform vec3 coefficients;
+    uniform float shininess;
+    
+    uniform vec3 ambientColor;
+    uniform vec3 diffuseColor;
+    uniform vec3 specularColor;
+    
+    uniform sampler2D texture;
+    void main(void) {
+      vec3 vertPos = vVertPos.xyz;
+      vec3 N = normalize(vNormals.xyz);
+      vec3 L = normalize(lightPosition - vertPos);
+
+      float lambertian = max(dot(N, L), 0.0);
+      float specTerm = 0.0;
+      
+      if(lambertian > 0.0) {
+        vec3 R = reflect(-L, N); 
+        vec3 V = normalize(-vertPos);
+
+        specTerm = pow(max(dot(R, V), 0.0), shininess);
+      }
+      
+      float Ka = coefficients.x;
+      float Kd = coefficients.y;
+      float Ks = coefficients.z;
+      vec4 shadedColor = vec4(Ka * ambientColor +
+                              Kd * lambertian * diffuseColor +
+                              Ks * specTerm * specularColor, 1.0);
+                            
+      gl_FragColor = shadedColor * texture2D(texture, fTexCoords);
+    }
+  </script>
+
+  <script>
+    $(document).ready(function(){      
+      var controls = {
+        lposX: 1, 
+        lposY: 1, 
+        lposZ: 1,
+        ambient: [.2, 0, .2], 
+        diffuse: [1, .8, 0], 
+        specular: [1, .8, 0], 
+        ka: 1,
+        kd: 1, 
+        ks: 1,
+        shininess: 100
+      };
+      
+      $("input").on("click change", function(){
+        switch($(this).attr('type')){
+        case "color":
+          controls[this.dataset.var] = getColorFromHex(this.value);
+          break;
+        case "range":
+          controls[this.dataset.var] = parseFloat(this.value);
+          break;
+        case "radio":
+          object = new Function("", "return " + this.value + ";")();
+
+          resetBuffers(gl, program, [{
+              name: "coordinates", 
+              size: 3, 
+              data: object.vertices
+            }, {
+              name: "normals", 
+              size: 3, 
+              data: object.normals
+            }, {
+              name: "texCoords", 
+              size: 2, 
+              data: object.texCoords
+            }
+          ]);
+        }
+      }); 
+      
+      var canvas = $("#webgl-scene")[0];
+      var gl = initWebGL(canvas);
+      var program = initShaders(gl, $("#shader-vs").text(), $("#shader-fs").text());
+      gl.useProgram(program);
+      clear(gl, [1.0, 1.0, 1.0, 1.0]);
+      
+      var object = cube();
+      var buffers = initBuffers(gl, program, [{
+          name: "coordinates", 
+          size: 3, 
+          data: object.vertices
+        }, {
+          name: "normals", 
+          size: 3, 
+          data: object.normals
+        }, {
+          name: "texCoords", 
+          size: 2, 
+          data: object.texCoords
+        }
+      ]);
+      
+      loadTexturesFromUrls(gl, program, [{
+        url: "wildcats.jpg",
+        sampler2D: [gl.TEXTURE0, "texture", 0]
+      }]);
+            
+      var modelViewLoc = gl.getUniformLocation(program, "modelView"); 
+      var projectionLoc = gl.getUniformLocation(program, "projection"); 
+      var ambientColorLoc = gl.getUniformLocation(program, "ambientColor");
+      var diffuseColorLoc = gl.getUniformLocation(program, "diffuseColor");
+      var specularColorLoc = gl.getUniformLocation(program, "specularColor");
+      var lightPositionLoc = gl.getUniformLocation(program, "lightPosition");
+      var coefficientsLoc = gl.getUniformLocation(program, "coefficients");
+      var shininessLoc = gl.getUniformLocation(program, "shininess");
+      
+      var theta = 0;
+      function animate(time){
+        theta += object.theta;
+        var t = mat4.fromTranslation(mat4.create(), object.translate);
+        var s = mat4.fromScaling(mat4.create(), object.scale);
+        var st = mat4.mul(mat4.create(), s, t);
+        var r = mat4.fromRotation(mat4.create(), glMatrix.toRadian(theta), object.axis);
+        var model = mat4.mul(mat4.create(), r, st);
+        
+        var view = mat4.lookAt(mat4.create(), object.eye, object.at, object.up);
+        var projection = mat4.ortho (mat4.create(), object.ortho[0], object.ortho[1], 
+          object.ortho[2], object.ortho[3], object.ortho[4], object.ortho[5]);
+        
+        gl.uniformMatrix4fv(modelViewLoc, false, mat4.mul(mat4.create(), view, model));
+        gl.uniformMatrix4fv(projectionLoc, false, projection);
+        gl.uniform3fv(ambientColorLoc, new Float32Array(controls.ambient)); 
+        gl.uniform3fv(diffuseColorLoc, new Float32Array(controls.diffuse)); 
+        gl.uniform3fv(specularColorLoc, new Float32Array(controls.specular));
+        gl.uniform3f(lightPositionLoc, controls.lposX, controls.lposY, controls.lposZ);
+        gl.uniform1f(shininessLoc, controls.shininess);
+        gl.uniform3f(coefficientsLoc, controls.ka, controls.kd, controls.ks);
+        
+        gl.drawArrays(gl.TRIANGLES, 0, object.vertices.length / 3);
+        
+        window.requestAnimationFrame(animate);
+      }
+      
+      animate(0);
+    });
+  </script>
+</body>
+</html>

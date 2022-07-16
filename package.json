@@ -1,0 +1,36 @@
+{
+  "name": "project-starter",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Abdulmalek Al-Gahmi",
+  "license": "MIT",
+  "keywords": [],
+  "scripts": {
+    "deploy": "npx webpack",
+    "start": "npx webpack-dev-server"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.10.5",
+    "@babel/core": "^7.11.0",
+    "@babel/preset-env": "^7.11.0",
+    "autoprefixer": "^9.8.6",
+    "babel-loader": "^8.0.6",
+    "css-loader": "^2.1.1",
+    "file-loader": "^3.0.1",
+    "mini-css-extract-plugin": "^0.5.0",
+    "node-sass": "^4.14.1",
+    "postcss-loader": "^3.0.0",
+    "raw-loader": "^1.0.0",
+    "sass-loader": "^7.1.0",
+    "style-loader": "^0.23.1",
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0"
+  },
+  "dependencies": {
+    "d3": "^5.16.0",
+    "dat.gui": "^0.7.7",
+    "three": "^0.120.1",
+    "three-obj-mtl-loader": "^1.0.3"
+  }
+}
