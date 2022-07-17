@@ -26,3 +26,6 @@ npm run deploy
 ```
 
 This command will compile your application into the `dist` folder. It's the contents of this folder that you upload to the weber server for final deployment.
+
+# Acknowledgement
+This project is originally based from Prof. PhD. Abdulmalek Al-Gahmi [CS 4280 Computer Graphics Course](https://github.com/WSU-FALL-2020/cs4280-inclass)
