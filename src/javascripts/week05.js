@@ -1,8 +1,9 @@
 import { WebGLHelper } from './webgl_helper'
 import * as dat from 'dat.gui'
 
-
+// Functions
 export function displayMultiprogram(){
+  console.log('displayMultiprogram')
   let canvas = document.querySelector("#webgl-scene")
   let gl = WebGLHelper.initWebGL(canvas)
   const vs_script = `#version 300 es
@@ -145,6 +146,7 @@ export function displayMultiprogram(){
 }
 
 export function sierpinski(){
+  console.log('sierpinski')
   const vs_script = `#version 300 es
     in vec3 coordinates;
     in vec3 color;
@@ -228,6 +230,7 @@ export function sierpinski(){
 }
 
 export function scribble(){
+  console.log('scribble')
   const vs_script = `#version 300 es
     in vec3 coordinates;
     in vec3 color;
@@ -334,3 +337,8 @@ export function scribble(){
   }
 
 }
+
+// Main
+// scribble() // paint program
+sierpinski() // Draw triangle?
+// displayMultiprogram() // 3 objects animation

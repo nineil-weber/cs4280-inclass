@@ -248,3 +248,7 @@ export function displayTexturedScene(){
   // gui.add(controls, 'theta').min(-1 * Math.PI).max(Math.PI).onChange(animate)
   // gui.add(controls, 'phi').min(-1 * Math.PI).max(Math.PI).onChange(animate)
 }
+
+//Main
+displayOcean()
+// displayTexturedScene()

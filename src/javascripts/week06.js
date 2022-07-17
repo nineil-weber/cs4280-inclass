@@ -2,6 +2,7 @@ import { WebGLHelper } from './webgl_helper'
 import * as dat from 'dat.gui'
 import * as THREE from 'three'
 
+// Functions and classes
 class CubeIndexed {
   constructor(){
     this.vertices = [
@@ -41,7 +42,6 @@ class CubeIndexed {
     this.indices.push(a, c, d)
   }
 }
-
 
 export function displayCubeIndexed(){
   const vs_script = `#version 300 es
@@ -171,7 +171,6 @@ class Cube {
   }
 }
 
-
 export function displayCube(){
   const vs_script = `#version 300 es
     in vec3 coordinates;
@@ -242,3 +241,7 @@ export function displayCube(){
   document.querySelector('aside').appendChild(gui.domElement)
   gui.add(controls, 'axis', {x: 0, y: 1, z: 2})
 }
+
+// Main
+// displayCubeIndexed()
+displayCube()

@@ -4,7 +4,7 @@ require.context('../images/', true, /\.(gif|jpg|png|svg|eot|ttf|woff|woff2)$/i)
 require.context('../stylesheets/', true, /\.(css|scss)$/i)
 
 // First: Set up your name
-let std_name = "Your name goes here"
+let std_name = "Nils Murrugarra-Llerena"
 document.querySelector('#std_name').innerHTML = `<strong>${std_name}</strong>`
 
 //Then: comes everything else
@@ -15,9 +15,14 @@ import fs_script from "../shaders/fragment.glsl"
 // JavaScript
 import { WebGLHelper } from './webgl_helper'
 
-displayPrimitivesAtClick(vs_script, fs_script)
+// displayPoint(vs_script, fs_script)
+// displayTriangle(vs_script, fs_script)
+displayColoredTriangles(vs_script, fs_script)
+// displayPointAtClick(vs_script, fs_script) //Display point at click
+// displayPrimitivesAtClick(vs_script, fs_script) // Draw Triangles with clicks
 
 export function displayPrimitivesAtClick(vs_script, fs_script){
+  console.log('displayPrimitivesAtClick')
   let canvas = document.querySelector("#webgl-scene")
   let gl = WebGLHelper.initWebGL(canvas)
 
@@ -37,6 +42,10 @@ export function displayPrimitivesAtClick(vs_script, fs_script){
     vertices.push(y)
     vertices.push(0.0)
 
+    console.log('coordinates')
+    console.log(x)
+    console.log(y)
+
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW)
     gl.drawArrays(gl.TRIANGLES, 0, vertices.length / 3)
 
@@ -46,6 +55,7 @@ export function displayPrimitivesAtClick(vs_script, fs_script){
 }
 
 export function displayPointAtClick(vs_script, fs_script) {
+  console.log('displayPointAtClick')
   let canvas = document.querySelector("#webgl-scene")
   canvas.width = canvas.getClientRects()[0].width;
   canvas.height = canvas.getClientRects()[0].height;
@@ -95,6 +105,7 @@ export function displayPointAtClick(vs_script, fs_script) {
 }
 
 export function displayTriangle(vs_script, fs_script) {
+  console.log('displayTriangle')
   let canvas = document.querySelector("#webgl-scene")
   canvas.width = canvas.getClientRects()[0].width;
   canvas.height = canvas.getClientRects()[0].height;
@@ -140,6 +151,7 @@ export function displayTriangle(vs_script, fs_script) {
 }
 
 export function displayPoint(vs_script, fs_script) {
+  console.log('displayPoint')
   let canvas = document.querySelector("#webgl-scene")
   canvas.width = canvas.getClientRects()[0].width;
   canvas.height = canvas.getClientRects()[0].height;
@@ -179,6 +191,7 @@ export function displayPoint(vs_script, fs_script) {
 }
 
 export function displayColoredTriangles(vs_script, fs_script){
+  console.log('displayColoredTriangles')
   let canvas = document.querySelector("#webgl-scene")
   let gl = WebGLHelper.initWebGL(canvas)
 
@@ -188,14 +201,23 @@ export function displayColoredTriangles(vs_script, fs_script){
   WebGLHelper.initBuffers(gl, program, [{
       name: 'coordinates',
       size: 3,
-      data: [0 ,0 , 0, .5, .5, 0, .5, -.5, 0]
-    },{
+      data: [0 ,0 , 0,
+            .5, .5, 0,
+            .5, -.5, 0]
+    },{ // TODO: color not working yet
       name: 'color',
       size: 3,
-      data: [1,0,0, 0,1,0, 0,0,1]
+      // data: [0,1,0, 1,0,0, 0,0,1]
+      // data: [1,0,0,1, 1,0,0,1, 1,0,0,1]
+      // data: [1.0,0.0,0.0,1.0, 1.0,0.0,0.0,1.0, 1.0,0.0,0.0,1.0 ]
+      data: [1.0,0.0,0.0,0.0, 0.0,1.0,0.0,0.0, 0.0,0.0,1.0,0.0 ]
+      // data: [1,0,0, 0,1,0, 0,0,1]
+      // data: [1.0,0.0,0.0, 0.0,1.0,0.0, 0.0,0.0,1.0]
     }])
 
-  WebGLHelper.clear(gl, [1.0, 1.0, 1.0, 1.0])
-  gl.drawArrays(gl.TRIANGLES, 0, 3)
+  // WebGLHelper.clear(gl, [1.0, 1.0, 1.0, 1.0]) // background color: white
+  WebGLHelper.clear( gl, [1.0, 0.0, 0.0, 1.0] ) // background color: red
+  // gl.drawArrays( gl.TRIANGLES, 0, 3 )
+  gl.drawArrays( gl.POINTS, 0, 3 )
 
 }

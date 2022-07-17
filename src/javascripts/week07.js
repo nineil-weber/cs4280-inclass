@@ -134,9 +134,6 @@ export function displayCube(){
   gui.add(controls, 's_z').min(0.1).max(2).onChange(animate)
 }
 
-
-
-
 export function displayMultipleCubes(){
 
     const vs_script = `#version 300 es
@@ -369,7 +366,8 @@ export function displayMultipleCubes(){
 
         cube.colors = newColors
 
-        cube.fixColors()
+        // cube.fixColors()
+        cube.fixColors
 
  
 
@@ -394,8 +392,6 @@ export function displayMultipleCubes(){
     }
 
 }
-
- 
 
 export function displaySphere() {
 
@@ -547,3 +543,7 @@ export function displaySphere() {
 
 }
 
+// Main
+// displayCube()
+// displayMultipleCubes()
+displaySphere()

@@ -47,3 +47,7 @@ export function displayScene(){
 
   animate()
 }
+
+// Main
+getBoard()
+// displayScene()

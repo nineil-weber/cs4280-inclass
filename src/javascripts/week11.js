@@ -425,3 +425,8 @@ export function displayTexturedScene(){
   // gui.add(controls, 'phi').min(-1 * Math.PI).max(Math.PI).onChange(animate)
 }
 
+// Main
+displayCubes()
+// displaySolar()
+// displayCity()
+// displayTexturedScene()

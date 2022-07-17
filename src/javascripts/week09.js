@@ -106,7 +106,6 @@ export function displayMeshes(){
   gui.add(controls, 'phi').min(-1 * Math.PI).max(Math.PI).onChange(animate)
 }
 
-
 export function displayLightedScene(){
   let canvas = document.querySelector('#webgl-scene')
   let scene = new THREE.Scene()
@@ -252,5 +251,8 @@ export function displayLightedScene(){
 
 }
 
+// Main
+// displayMeshes()
+displayLightedScene()
 
 

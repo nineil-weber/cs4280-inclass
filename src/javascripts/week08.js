@@ -145,7 +145,6 @@ export function displayAnimatedCube(){
   animate()
 }
 
-
 export function displayCubeScene(){
   let canvas = document.querySelector('#webgl-scene')
   let scene = new THREE.Scene()
@@ -208,3 +207,8 @@ export function displayCubeScene(){
   gui.add(controls, 'theta').min(-1 * Math.PI).max(Math.PI).onChange(animate)
 
 }
+
+// Main
+// displayThreeHelloWorld()
+// displayAnimatedCube()
+displayCubeScene()
