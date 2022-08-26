@@ -49,10 +49,3 @@ testem.log
 .DS_Store
 Thumbs.db
 
-# Next Lectures
-src/javascripts/week0[2-9].js
-src/javascripts/week1[0-2].js
-src/javascripts/week12-physics.js
-
-src/week0[2-9].html
-src/week1[0-2].html
