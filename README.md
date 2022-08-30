@@ -30,6 +30,7 @@ This command will compile your application into the `dist` folder. It's the cont
 ## Troubleshooting
 If you have issues installing this tool, please follow these instructions:
 
+### Mac
 ```bash
 npm install -g n
 n 12.20.0
@@ -38,6 +39,17 @@ sudo npm install
 Please, verify that you have the original package.json file.
 
 Reference link: https://stackoverflow.com/questions/47008159/how-to-downgrade-node-version
+
+### Windows
+First, let's install nvm-windows: https://github.com/coreybutler/nvm-windows
+
+```bash
+nvm install 12.20.0
+nvm use 12.20.0
+npm install -g yarn
+npm install
+```
+Please, verify that you have the original package.json file. If you are still having issues, please remove node_modules/ and packages-lock.json
 
 # Acknowledgement
 This project is originally based from Prof. PhD. Abdulmalek Al-Gahmi [CS 4280 Computer Graphics Course](https://github.com/WSU-FALL-2020/cs4280-inclass)
