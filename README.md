@@ -35,9 +35,9 @@ npm install -g n
 n 12.20.0
 sudo npm install
 ```
+Please, verify that you have the original package.json file.
 
 Reference link: https://stackoverflow.com/questions/47008159/how-to-downgrade-node-version
-
 
 # Acknowledgement
 This project is originally based from Prof. PhD. Abdulmalek Al-Gahmi [CS 4280 Computer Graphics Course](https://github.com/WSU-FALL-2020/cs4280-inclass)
