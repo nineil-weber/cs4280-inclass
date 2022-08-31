@@ -20,9 +20,37 @@
 
   <main>
     <article>
-      <canvas id="webgl-scene">
-        Your browser does not support HTML5.
-      </canvas>
+
+      <!--Week 1-->
+      <!-- # Examples: https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Basic_Shapes -->
+      <svg width="500" height="600" style="background: rgb(232, 207, 207)" fill="transparent">
+        <g transform="rotate(-270  100, 100)">
+          <circle cx="150" cy="125" r="100" stroke="black" fill="transparent" />
+          <rect x="10" y="10" width="30" height="30" stroke="green" fill="green" />
+        </g>
+
+
+        <ellipse cx="250" cy="450" rx="200" ry="100" stroke="green" fill="transparent" />
+        <line x1="0" y1="0" x2="500" y2="600" stroke="blue" />
+
+        <!-- Doc: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d-->
+        <path d="M100,200 L200,400 v50 h30 Z" stroke="red" fill="transparent" stroke-width=3 />
+
+        <!-- Quadratic curve-->
+        <circle cx="150" cy="200" r="3" fill="blue" />
+        <path d="M100,400 Q 150,200 400, 400" stroke="red" fill="transparent" stroke-width=3 />
+
+        <!-- Cubic curve-->
+        <circle cx="150" cy="350" r="3" fill="green" />
+        <circle cx="400" cy="550" r="3" fill="green" />
+        <path d="M100,400 C 150,350 400,550 450,450" stroke="green" fill="transparent" stroke-width=3 />
+
+      </svg>
+<!--&lt;!&ndash;      Original&ndash;&gt;-->
+<!--      <canvas id="webgl-scene">-->
+<!--        Your browser does not support HTML5.-->
+<!--      </canvas>-->
+
     </article>
     <aside>
       <ul>

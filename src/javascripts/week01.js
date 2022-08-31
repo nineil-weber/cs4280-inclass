@@ -7,12 +7,12 @@ require.context('../stylesheets/', true, /\.(css|scss)$/i)
 let std_name = "Nils Murrugarra-Llerena"
 document.querySelector('#std_name').innerHTML = `<strong>${std_name}</strong>`
 
-// In class  - lecture
+// [Fall 2022]  - JavaScript
 let x = 3
 console.log(x)
 
-str1 = `this 
-is a 
+str1 = `this
+is a
 multi-line string`
 
 console.log(str1)
@@ -65,7 +65,7 @@ const gm = (x,y) => Math.max(x, y) // Similar to Lambda Function (python)
 output_2 = gm(3, 9)
 console.log(output_2)
 
-// // [Backup] Variables and printing
+// // [Previous class] - JavaScript
 // let x = 10
 // const PI = 3.14
 //
@@ -151,7 +151,7 @@ console.log(output_2)
 //
 // console.log(name)
 
-// //////////////////////// Start with D3
+// //////////////////////// [Previous class] - D3
 // import * as d3 from "d3";
 // let da = [
 //   [18, 'One'],
