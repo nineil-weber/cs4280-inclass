@@ -25,8 +25,46 @@
       <!-- # Examples: https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Basic_Shapes -->
       <svg width="500" height="600" style="background: rgb(232, 207, 207)" fill="transparent">
         <g transform="rotate(-270  100, 100)">
-          <circle cx="150" cy="125" r="100" stroke="black" fill="transparent" />
-          <rect x="10" y="10" width="30" height="30" stroke="green" fill="green" />
+          <circle cx="150" cy="125" r="100" stroke="black" fill="transparent" >
+            <animate
+                    attributeName="r",
+                    from="20",
+                    to="100",
+                    begin="0s",
+                    dur="2s",
+                    repeatCount="5"
+            />
+          </circle>
+          <rect x="10" y="10" width="30" height="30" stroke="green" fill="green" >
+            <animate
+                    attributeName="width",
+                    from="10",
+                    to="100",
+                    begin="0s",
+                    dur="5s",
+                    repeatCount="5"
+            />
+
+            <animateTransform
+                    attributeName="transform",
+                    begin="0s",
+                    dur="5s",
+                    type="rotate",
+                    from="0 150 125"
+                    to="360 150 125"
+                    repeatCount="5"
+            />
+
+<!--            <animateTransform-->
+<!--                    attributeName="transform",-->
+<!--                    begin="0s",-->
+<!--                    dur="5s",-->
+<!--                    type="skewX",-->
+<!--                    from="0"-->
+<!--                    to="30"-->
+<!--                    repeatCount="5"-->
+<!--            />-->
+          </rect>
         </g>
 
 
@@ -34,7 +72,7 @@
         <line x1="0" y1="0" x2="500" y2="600" stroke="blue" />
 
         <!-- Doc: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d-->
-        <path d="M100,200 L200,400 v50 h30 Z" stroke="red" fill="transparent" stroke-width=3 />
+        <path d="M100,200 L200,400 v-50 h30 Z" stroke="red" fill="transparent" stroke-width=3 transform="translate(100, 100) rotate(-20, 150, 125) scale(0.5)"/>
 
         <!-- Quadratic curve-->
         <circle cx="150" cy="200" r="3" fill="blue" />
@@ -45,6 +83,15 @@
         <circle cx="400" cy="550" r="3" fill="green" />
         <path d="M100,400 C 150,350 400,550 450,450" stroke="green" fill="transparent" stroke-width=3 />
 
+        <circle cx="0" cy="0" r="20" fill="transparent" stroke="purple">
+          <animateMotion
+                  path="M100,400 C 150,350 400,550 450,450"
+                  begin="0s",
+                  dur="4s",
+                  repeatCount="indefinite"
+
+          />
+        </circle>
       </svg>
 <!--&lt;!&ndash;      Original&ndash;&gt;-->
 <!--      <canvas id="webgl-scene">-->
@@ -55,7 +102,7 @@
     <aside>
       <ul>
         <li><a href="week01.html">Week 01</a></li>
-<!--        <li><a href="week02.html">Week 02</a></li>-->
+        <li><a href="week02.html">Week 02</a></li>
 <!--        <li><a href="week03.html">Week 03 - 04</a></li>-->
 <!--        <li><a href="week05.html">Week 05</a></li>-->
 <!--        <li><a href="week06.html">Week 06</a></li>-->
