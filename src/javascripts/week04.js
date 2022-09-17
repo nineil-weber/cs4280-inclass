@@ -142,7 +142,7 @@ export function sierpinski(){
     let vertices = []
 
     let controls = {
-        pointSize: 1,
+        pointSize: 10,
         pointColor: '#0000FF',
         pointCount: 1000,
         draw: true
@@ -177,20 +177,6 @@ export function sierpinski(){
         }
     }
 
-    let gui = new dat.GUI()
-    document.querySelector('aside').appendChild(gui.domElement)
-    gui.add(controls, 'pointSize').min(1).max(10).onChange(redraw)
-    gui.add(controls, 'pointCount').min(1000).max(100000).onChange(redraw)
-    gui.addColor(controls, 'pointColor').onChange(redraw)
-
-    gui.add(controls, 'draw')
-
-    document.onkeyup = function(e) {
-        if(e.key === "Escape"){
-            controls.draw = !controls.draw
-            gui.updateDisplay()
-        }
-    }
 
     redraw()
 
@@ -340,6 +326,6 @@ export function displayMultiprogram(){
 }
 
 // Main
-scribble() // paint program
-// sierpinski() // Draw triangle
+// scribble() // paint program
+sierpinski() // Draw triangle
 // displayMultiprogram() // 3 objects animation
