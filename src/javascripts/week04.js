@@ -177,6 +177,23 @@ export function sierpinski(){
         }
     }
 
+    let gui = new dat.GUI()
+    document.querySelector('aside').appendChild(gui.domElement)
+    gui.add(controls, 'pointSize').min(1).max(10).onChange(redraw)
+    gui.add(controls, 'pointCount').min(1000).max(100000).onChange(redraw)
+    gui.addColor(controls, 'pointColor').onChange(redraw)
+    // gui.add(controls, 'pointSize').min(1).max(10)
+    // gui.add(controls, 'pointCount').min(1000).max(100000)
+    // gui.addColor(controls, 'pointColor')
+
+    gui.add(controls, 'draw')
+
+    document.onkeyup = function(e) {
+        if(e.key === "Escape"){
+            controls.draw = !controls.draw
+            gui.updateDisplay()
+        }
+    }
 
     redraw()
 
