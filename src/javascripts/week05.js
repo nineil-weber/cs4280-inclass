@@ -458,3 +458,56 @@ vector_matrix_operations()
 
 // Notes
 // * WebGL coordinates: https://www.tutorialspoint.com/webgl/webgl_basics.htm
+
+// [Matlab Code] Transformations - Exercise 1
+// tm = [1 0 0 -20; 0 1 0 -30; 0 0 1 30; 0 0 0 1]
+// rm = [1 0 0 0; 0 cos(45 * pi / 180) -sin(45 * pi / 180) 0; 0 sin(45 * pi / 180) cos(45 * pi / 180) 0; 0 0 0 1]
+// trans_m = rm * tm
+// pm = [0 0 0 1; 0 60 0 1; 0 60 40 1; 90 0 0 1; 90 60 0 1; 90 60 40 1]'
+// rm = trans_m * pm
+
+// [Point Connections]
+// Base
+// p0	p1
+// p1	p4
+// p4	p3
+// p3	p0
+//
+// Pyramid
+// p4	p5
+// p3	p5
+// p0	p2
+// p1	p2
+// p2	p5
+
+
+// // [Init plot]
+// points = pm(1:3 ,:);
+// lines = [points(:,1) points(:,2) points(:,5) points(:,4) points(:,5) points(:,4) points(:,1) points(:,2) points(:,3);
+//          points(:,2) points(:,5) points(:,4) points(:,1) points(:,6) points(:,6) points(:,3) points(:,3) points(:,6)];
+// X = [lines(1,:)' lines(4,:)'];
+// Y = [lines(2,:)' lines(5,:)'];
+// Z = [lines(3,:)' lines(6,:)'];
+// plot3(X',Y',Z')
+// hold on
+// plot3(X',Y',Z','.')
+// xlabel('X');
+// ylabel('Y');
+// zlabel('Z');
+// grid;
+
+// // [Results plot]
+// figure();
+// new_points = rm(1:3, :);
+// lines = [new_points(:,1) new_points(:,2) new_points(:,5) new_points(:,4) new_points(:,5) new_points(:,4) new_points(:,1) new_points(:,2) new_points(:,3);
+//          new_points(:,2) new_points(:,5) new_points(:,4) new_points(:,1) new_points(:,6) new_points(:,6) new_points(:,3) new_points(:,3) new_points(:,6)];
+// X = [lines(1,:)' lines(4,:)'];
+// Y = [lines(2,:)' lines(5,:)'];
+// Z = [lines(3,:)' lines(6,:)'];
+// plot3(X',Y',Z')
+// hold on
+// plot3(X',Y',Z','.')
+// xlabel('X');
+// ylabel('Y');
+// zlabel('Z');
+// grid;
