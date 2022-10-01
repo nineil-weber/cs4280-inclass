@@ -316,12 +316,48 @@ export function displayMultipleCubes(){
         instantiate(3, 0.8, [.2, .6, .1], [.6, -.6, .1])
 
         requestAnimationFrame(animate)
+        // setNewColor()
     }
     animate()
 
     let gui = new dat.GUI()
     document.querySelector('aside').appendChild(gui.domElement)
     gui.add(controls, 'axis', { x: 0, y: 1, z: 2 })
+
+    // let sides = gui.addFolder('sides')
+    // sides.addColor(controls, 'front')
+    // sides.addColor(controls, 'back')
+    // sides.addColor(controls, 'top')
+    // sides.addColor(controls, 'bottom')
+    // sides.addColor(controls, 'left')
+    // sides.addColor(controls, 'right')
+    // sides.open()
+
+    // // Function for setting color of cube
+    // function setNewColor(){
+    //     let newColors = cube.colors
+    //
+    //     newColors[0] = WebGLHelper.getColorFromHex(controls.front)
+    //     newColors[1] = WebGLHelper.getColorFromHex(controls.back)
+    //     newColors[2] = WebGLHelper.getColorFromHex(controls.top)
+    //     newColors[3] = WebGLHelper.getColorFromHex(controls.bottom)
+    //     newColors[4] = WebGLHelper.getColorFromHex(controls.left)
+    //     newColors[5] = WebGLHelper.getColorFromHex(controls.right)
+    //
+    //     cube.colors = newColors
+    //     // cube.fixColors()
+    //     cube.fixColors
+    //
+    //     WebGLHelper.initBuffers(gl, program, [{
+    //         name: 'coordinates',
+    //         size: 3,
+    //         data: cube.v_out
+    //     }, {
+    //         name: 'color',
+    //         size: 3,
+    //         data: cube.c_out
+    //     }])
+    // }
 }
 
 export function displaySphere() {
@@ -392,8 +428,8 @@ export function displaySphere() {
 
 // Main
 // displayCubeIndexed()
-// displayCubeOperations()
 // displayMultipleCubes()
+// displayCubeOperations()
 displaySphere()
 
 // Notes

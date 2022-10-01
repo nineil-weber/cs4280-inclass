@@ -4,7 +4,9 @@ export class Sphere {
     for (let i = 0; i < nPoints; i++) {
       let theta = i * Math.PI / nPoints;
 
-      for (let j = 0; j < nPoints / 2; j++) {
+      // for (let j = 0; j < nPoints / 2; j++)
+      for (let j = 0; j < nPoints; j++)
+      {
         let phi = j * 2 * Math.PI / nPoints;
         this.vertices.push(
           r * Math.cos(phi) * Math.sin(theta),
