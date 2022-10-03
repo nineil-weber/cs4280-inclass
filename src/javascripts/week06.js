@@ -4,7 +4,229 @@ import * as THREE from 'three'
 
 import { Cube } from './cube'
 import { Sphere } from './sphere'
+import { Mesh } from './mesh'
+import { point_3d } from "./mesh";
 
+// [New]
+export function displayMesh(){
+    const vs_script = `#version 300 es
+    in vec3 coordinates;
+    in vec3 color;
+    out vec4 vColor;
+    uniform mat4 transformBy;
+    void main(void) {
+      gl_Position = transformBy * vec4(coordinates, 1.0);
+      vColor = vec4(color, 1.0);
+    }  
+  `
+    const fs_script = `#version 300 es
+    precision mediump float;
+    in vec4 vColor;
+    out vec4 fragColor;
+    void main(void) {
+      fragColor = vColor; 
+    }
+  `
+    let canvas = document.querySelector("#webgl-scene")
+    let gl = WebGLHelper.initWebGL(canvas)
+
+    let program = WebGLHelper.initShaders(gl, vs_script, fs_script)
+    gl.useProgram(program)
+
+    // Init Mesh
+    let h = 1.0, aux_matrix = []
+
+    //Adapted
+    aux_matrix[0] = []
+    aux_matrix[0][0] = new point_3d(0*h,0*h,0*h);
+    aux_matrix[0][1] = new point_3d(0*h,0.25*h,0*h);
+    aux_matrix[0][2] = new point_3d(0*h,0.5*h,0*h);
+    aux_matrix[0][3] = new point_3d(0*h,0.75*h,0*h);
+
+    aux_matrix[1] = []
+    aux_matrix[1][0]=new point_3d(0.25*h,0*h,0*h);
+    aux_matrix[1][1]=new point_3d(0.25*h,0.25*h,0*h);
+    aux_matrix[1][2]=new point_3d(0.25*h,0.5*h,0*h);
+    aux_matrix[1][3]=new point_3d(0.25*h,0.75*h,0*h);
+
+    aux_matrix[2] = []
+    aux_matrix[2][0]=new point_3d(0.5*h,0*h,0*h);
+    aux_matrix[2][1]=new point_3d(0.5*h,0.25*h,0*h);
+    aux_matrix[2][2]=new point_3d(0.5*h,0.5*h,0*h);
+    aux_matrix[2][3]=new point_3d(0.5*h,0.75*h,0*h);
+
+    aux_matrix[3] = []
+    aux_matrix[3][0]=new point_3d(0.75*h,0*h,0*h);
+    aux_matrix[3][1]=new point_3d(0.75*h,0.25*h,0*h);
+    aux_matrix[3][2]=new point_3d(0.75*h,0.5*h,0*h);
+    aux_matrix[3][3]=new point_3d(0.75*h,0.75*h,0*h);
+
+    // //Original
+    // aux_matrix[0] = []
+    // aux_matrix[0][0] = new point_3d(0*h,0*h,0*h);
+    // aux_matrix[0][1] = new point_3d(0*h,20*h,0*h);
+    // aux_matrix[0][2] = new point_3d(0*h,40*h,0*h);
+    // aux_matrix[0][3] = new point_3d(0*h,60*h,0*h);
+    //
+    // aux_matrix[1] = []
+    // aux_matrix[1][0]=new point_3d(20*h,0*h,0*h);
+    // aux_matrix[1][1]=new point_3d(20*h,20*h,0*h);
+    // aux_matrix[1][2]=new point_3d(20*h,40*h,0*h);
+    // aux_matrix[1][3]=new point_3d(20*h,60*h,0*h);
+    //
+    // aux_matrix[2] = []
+    // aux_matrix[2][0]=new point_3d(40*h,0*h,0*h);
+    // aux_matrix[2][1]=new point_3d(40*h,20*h,0*h);
+    // aux_matrix[2][2]=new point_3d(40*h,40*h,0*h);
+    // aux_matrix[2][3]=new point_3d(40*h,60*h,0*h);
+    //
+    // aux_matrix[3] = []
+    // aux_matrix[3][0]=new point_3d(60*h,0*h,0*h);
+    // aux_matrix[3][1]=new point_3d(60*h,20*h,0*h);
+    // aux_matrix[3][2]=new point_3d(60*h,40*h,0*h);
+    // aux_matrix[3][3]=new point_3d(60*h,60*h,0*h);
+
+    let mesh_instance = new Mesh(aux_matrix)
+    mesh_instance.plot(0.1)
+    // mesh_instance.print()
+
+    let buffers = WebGLHelper.initBuffers(gl, program, [{
+        name: 'coordinates',
+        size: 3,
+        data: mesh_instance.v_out
+    }, {
+        name: 'color',
+        size: 3,
+        data: mesh_instance.c_out
+    }])
+
+    let transformByLoc = gl.getUniformLocation(program, 'transformBy')
+
+    let controls = {
+        t_x: 0,
+        t_y: 0,
+        t_z: 0,
+
+        r_x: 0,
+        r_y: 0,
+        r_z: 0,
+
+        next_control_Point:function(){ mesh_instance.update_to_next_current_point() },
+        prev_control_Point:function(){ mesh_instance.update_to_prev_current_point() },
+        t_x_pos:function(){ controls.t_x = 0.05; controls.t_y = 0; controls.t_z = 0; animate() },
+        t_x_neg:function(){ controls.t_x = -0.05; controls.t_y = 0; controls.t_z = 0; animate() },
+        t_y_pos:function(){ controls.t_x = 0; controls.t_y = 0.05; controls.t_z = 0; animate() },
+        t_y_neg:function(){ controls.t_x = 0; controls.t_y = -0.05; controls.t_z = 0; animate() },
+        t_z_pos:function(){ controls.t_x = 0; controls.t_y = 0; controls.t_z = 0.05; animate() },
+        t_z_neg:function(){ controls.t_x = 0; controls.t_y = 0; controls.t_z = -0.05; animate() },
+
+        r_x_pos:function(){ controls.r_x = 30; controls.r_y = 0; controls.r_z = 0; animate() },
+        r_x_neg:function(){ controls.r_x = 360-30; controls.r_y = 0; controls.r_z = 0; animate() },
+        r_y_pos:function(){ controls.r_x = 0; controls.r_y = 30; controls.r_z = 0; animate() },
+        r_y_neg:function(){ controls.r_x = 0; controls.r_y = 360-30; controls.r_z = 0; animate() },
+        r_z_pos:function(){ controls.r_x = 0; controls.r_y = 0; controls.r_z = 30; animate() },
+        r_z_neg:function(){ controls.r_x = 0; controls.r_y = 0; controls.r_z = 360-30; animate() }
+    }
+
+    // Identity
+    function animate()
+    {
+        mesh_instance.traslade_current_point(controls.t_x, controls.t_y, controls.t_z)
+        mesh_instance.plot(0.1)
+
+        let buffers = WebGLHelper.initBuffers(gl, program, [{
+            name: 'coordinates',
+            size: 3,
+            data: mesh_instance.v_out
+        }, {
+            name: 'color',
+            size: 3,
+            data: mesh_instance.c_out
+        }])
+
+        // let id_mat = new THREE.Matrix4().identity()
+        let rx  = new THREE.Matrix4().makeRotationX(controls.r_x * Math.PI / 180)
+        let ry  = new THREE.Matrix4().makeRotationY(controls.r_y * Math.PI / 180)
+        let rz  = new THREE.Matrix4().makeRotationZ(controls.r_z * Math.PI / 180)
+
+        let ryz = new THREE.Matrix4().multiplyMatrices(ry, rz)
+        let rxyz = new THREE.Matrix4().multiplyMatrices(rx, ryz)
+        let id_mat = rxyz
+
+        WebGLHelper.clear(gl, [1, 1, 1, 1])
+        gl.uniformMatrix4fv(transformByLoc, false, id_mat.elements)
+
+        gl.drawArrays(gl.LINES, 0, mesh_instance.v_out.length)
+    }
+    animate()
+
+    // //Rotations
+    // let theta = [0, 0, 0]
+    // function animate(){
+    //     mesh_instance.traslade_current_point(controls.t_x, controls.t_y, controls.t_z)
+    //     mesh_instance.plot(0.1)
+    //
+    //     let buffers = WebGLHelper.initBuffers(gl, program, [{
+    //         name: 'coordinates',
+    //         size: 3,
+    //         data: mesh_instance.v_out
+    //     }, {
+    //         name: 'color',
+    //         size: 3,
+    //         data: mesh_instance.c_out
+    //     }])
+    //
+    //     theta[controls.axis] += .8
+    //
+    //     let rx  = new THREE.Matrix4().makeRotationX(controls.r_x * Math.PI / 180)
+    //     let ry  = new THREE.Matrix4().makeRotationY(controls.r_y * Math.PI / 180)
+    //     let rz  = new THREE.Matrix4().makeRotationZ(controls.r_z * Math.PI / 180)
+    //
+    //     // console.log('theta')
+    //     // console.log(theta)
+    //     // console.log('rx')
+    //     // console.log( rx.transpose() )
+    //     // console.log('ry')
+    //     // console.log( ry.transpose() )
+    //     // console.log('rz')
+    //     // console.log( rz.transpose() )
+    //     // setTimeout(() => { console.log("World!"); }, 5000);
+    //
+    //     let ryz = new THREE.Matrix4().multiplyMatrices(ry, rz)
+    //     let rxyz = new THREE.Matrix4().multiplyMatrices(rx, ryz)
+    //
+    //     WebGLHelper.clear(gl, [1, 1, 1, 1])
+    //     gl.uniformMatrix4fv(transformByLoc, false, rxyz.elements)
+    //
+    //     gl.drawArrays(gl.LINES, 0, mesh_instance.v_out.length)
+    //     // gl.drawArrays(gl.POINTS, 0, mesh_instance.v_out.length)
+    //
+    //     requestAnimationFrame(animate)
+    // }
+    // animate()
+
+    let gui = new dat.GUI()
+    document.querySelector('aside').appendChild(gui.domElement)
+
+    gui.add(controls, 't_x_pos')
+    gui.add(controls, 't_x_neg')
+    gui.add(controls, 't_y_pos')
+    gui.add(controls, 't_y_neg')
+    gui.add(controls, 't_z_pos')
+    gui.add(controls, 't_z_neg')
+
+    gui.add(controls, 'r_x_pos')
+    gui.add(controls, 'r_x_neg')
+    gui.add(controls, 'r_y_pos')
+    gui.add(controls, 'r_y_neg')
+    gui.add(controls, 'r_z_pos')
+    gui.add(controls, 'r_z_neg')
+
+    gui.add(controls,'next_control_Point');
+    gui.add(controls,'prev_control_Point');
+}
+
+// [Prev]
 // Helpers
 function getTRSTransformation(controls){
     let e = new THREE.Euler(
@@ -430,7 +652,8 @@ export function displaySphere() {
 // displayCubeIndexed()
 // displayMultipleCubes()
 // displayCubeOperations()
-displaySphere()
+// displaySphere()
+displayMesh()
 
 // Notes
 // * WebGL coordinates: https://www.tutorialspoint.com/webgl/webgl_basics.htm
