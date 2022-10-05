@@ -1,3 +1,41 @@
+// Functions
+function multiply_matrices(A, B)
+{
+  let C
+
+  let nrows_A = A.length
+  let ncols_A = A[0].length
+  let nrows_B = B.length
+  let ncols_B = B[0].length
+
+  // Init C
+  C = []
+  for(let i=0; i< nrows_A; i++)
+  {
+    C.push([])
+    for (let j=0; j<ncols_B; j++)
+    {
+      C[i].push(0)
+    }
+  }
+
+  if (ncols_A == nrows_B)
+  {
+    for (let i=0;i<nrows_A;i++)
+    {
+      for (let j=0;j<ncols_B;j++)
+      {
+        for(let k=0; k<ncols_A; k++)
+        {
+          C[i][j] = C[i][j]+ A[i][k]*B[k][j]
+        }
+      }
+    }
+  }
+  return C
+}
+
+// Class
 export class point_3d{
   constructor(x, y, z)
   {
@@ -20,8 +58,6 @@ export class Mesh {
 
     this.control_points = []
     this.color = 0
-    this.theta = 0
-    this.phi = 0
     this.current_point = 0
 
     // Process
@@ -43,6 +79,7 @@ export class Mesh {
       this.current_point -= 1
   }
 
+  // Operations
   traslade_current_point(tx, ty, tz)
   {
     let p, q, k=0;
@@ -59,12 +96,85 @@ export class Mesh {
         k++;
       }
     }
-    console.log('Update points by: ['+tx+', '+ty+', '+tz+']')
+    // console.log('Update points by: ['+tx+', '+ty+', '+tz+']')
     this.control_points[p][q].x =  this.control_points[p][q].x + tx;
     this.control_points[p][q].y =  this.control_points[p][q].y + ty;
     this.control_points[p][q].z =  this.control_points[p][q].z + tz;
   }
 
+  rotate_fun(rot_mat)
+  {
+    let i, j, k
+    let points_mat // 4 by 16
+
+    points_mat = []
+    points_mat[0] = []
+    points_mat[1] = []
+    points_mat[2] = []
+    points_mat[3] = []
+
+    for (i=0;i<4;i++)
+    {
+      for (j=0;j<4;j++)
+      {
+        points_mat[0].push( this.control_points[i][j].x );
+        points_mat[1].push( this.control_points[i][j].y );
+        points_mat[2].push( this.control_points[i][j].z );
+        points_mat[3].push( 1 );
+      }
+    }
+
+    let result_mat = multiply_matrices(rot_mat, points_mat)
+
+    // Copy back to control points
+    k = 0
+    for (i=0;i<4;i++)
+    {
+      for (j=0;j<4;j++)
+      {
+        this.control_points[i][j].x = result_mat[0][k]
+        this.control_points[i][j].y = result_mat[1][k]
+        this.control_points[i][j].z = result_mat[2][k]
+        // Discard homogeneus coordinates
+        k += 1
+      }
+    }
+  }
+
+  rotate_x(angle)
+  {
+    let phi = angle*(Math.PI/180.0) // degress --> radians
+    let rot_x = [ [1,0            ,0             ,0],
+                  [0,Math.cos(phi),-Math.sin(phi),0],
+                  [0,Math.sin(phi), Math.cos(phi),0],
+                  [0,0            ,0            ,1]]
+
+    this.rotate_fun(rot_x)
+  }
+
+  rotate_y(angle)
+  {
+    let phi = angle*(Math.PI/180.0) // degress --> radians
+    let rot_y = [ [Math.cos(phi), 0,Math.sin(phi),0],
+                  [0,             1,0,            0],
+                  [-Math.sin(phi),0,Math.cos(phi),0],
+                  [0,             0,0            ,1]]
+
+    this.rotate_fun(rot_y)
+  }
+
+  rotate_z(angle)
+  {
+    let phi = angle*(Math.PI/180.0) // degress --> radians
+    let rot_z = [ [Math.cos(phi),-Math.sin(phi),0,0],
+                  [Math.sin(phi),Math.cos(phi),0,0],
+                  [0,            0,            1,0],
+                  [0,            0,            0,1]]
+
+    this.rotate_fun(rot_z)
+  }
+
+  // Helpers
   compute_bezier_function(t, index)
   {
     let f = 0.0
@@ -111,7 +221,6 @@ export class Mesh {
 
   plot(inc)
   {
-    // plot(g, 0.1)
     let i =0, j=0, k = 0, p=0, q=0
     let blue_color = [1, 0, 0]
 
@@ -132,10 +241,6 @@ export class Mesh {
     j = this.control_points[p][q].y
     k = this.control_points[p][q].z
 
-    // CEsfera e = new CEsfera(5,new Color(0,0,0),i,j,k);
-    // e.theta = theta;
-    // e.phi = phi;
-
     let point_3d_instance, point_start, point_end
 
     // Init points
@@ -143,26 +248,17 @@ export class Mesh {
     this.c_out = []
 
     // Horizontal pass
-    console.log("t --> s");
+    // console.log("t --> s");
     for(let t=0.0;t<=1.0;t+=inc)
     {
       for(let s=0.0;s<=1.0;s+=inc)
       {
         point_3d_instance = this.compute_point(s, t, this.control_points) // beta function
-        // punto3d.angTheta = theta;
-        // punto3d.angPhi = phi;
-        // punto2Df=punto3d.Proyectar(proy); // convierte a 2D
-        // puntitof=cambiarCoordenadasDispositivo(punto2Df,800,600);
-
         point_start = point_3d_instance
-        // console.log( "[t="+t+",s="+s+"]" )
         // point_3d_instance.print()
 
         if(s!=0)
-        {
-          // g.drawLine(puntitoi[0],puntitoi[1],puntitof[0],puntitof[1]);
-
-          // Draw line
+        {// Draw line
           this.v_out.push(point_start.x, point_start.y, point_start.z)
           this.c_out.push(blue_color[0], blue_color[1], blue_color[2])
           this.v_out.push(point_end.x, point_end.y, point_end.z)
@@ -173,25 +269,17 @@ export class Mesh {
     }
 
     // Vertical pass
-    console.log("s --> t");
+    // console.log("s --> t");
     for(let s=0.0; s<=1.0; s+=inc)
     {
       for(let t=0.0; t<=1.0; t+=inc)
       {
         point_3d_instance = this.compute_point(s, t, this.control_points) // beta function
-        // ////////////////////////////////////////////
-        // punto3d.angTheta = theta;
-        // punto3d.angPhi = phi;
-        // punto2Df=punto3d.Proyectar(proy);
-        // ////////////////////////////////////////////
-        // puntitof=cambiarCoordenadasDispositivo(punto2Df,800,600);
         point_start = point_3d_instance
-        // console.log("[s="+s+",t="+t+"]")
         // point_3d_instance.print()
 
         if(t != 0.0)
         {
-          // g.drawLine(puntitoi[0],puntitoi[1],puntitof[0],puntitof[1]);
           // Draw line
           this.v_out.push(point_start.x, point_start.y, point_start.z)
           this.c_out.push(blue_color[0], blue_color[1], blue_color[2])

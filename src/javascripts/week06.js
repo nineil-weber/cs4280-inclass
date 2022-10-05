@@ -61,33 +61,8 @@ export function displayMesh(){
     aux_matrix[3][2]=new point_3d(0.75*h,0.5*h,0*h);
     aux_matrix[3][3]=new point_3d(0.75*h,0.75*h,0*h);
 
-    // //Original
-    // aux_matrix[0] = []
-    // aux_matrix[0][0] = new point_3d(0*h,0*h,0*h);
-    // aux_matrix[0][1] = new point_3d(0*h,20*h,0*h);
-    // aux_matrix[0][2] = new point_3d(0*h,40*h,0*h);
-    // aux_matrix[0][3] = new point_3d(0*h,60*h,0*h);
-    //
-    // aux_matrix[1] = []
-    // aux_matrix[1][0]=new point_3d(20*h,0*h,0*h);
-    // aux_matrix[1][1]=new point_3d(20*h,20*h,0*h);
-    // aux_matrix[1][2]=new point_3d(20*h,40*h,0*h);
-    // aux_matrix[1][3]=new point_3d(20*h,60*h,0*h);
-    //
-    // aux_matrix[2] = []
-    // aux_matrix[2][0]=new point_3d(40*h,0*h,0*h);
-    // aux_matrix[2][1]=new point_3d(40*h,20*h,0*h);
-    // aux_matrix[2][2]=new point_3d(40*h,40*h,0*h);
-    // aux_matrix[2][3]=new point_3d(40*h,60*h,0*h);
-    //
-    // aux_matrix[3] = []
-    // aux_matrix[3][0]=new point_3d(60*h,0*h,0*h);
-    // aux_matrix[3][1]=new point_3d(60*h,20*h,0*h);
-    // aux_matrix[3][2]=new point_3d(60*h,40*h,0*h);
-    // aux_matrix[3][3]=new point_3d(60*h,60*h,0*h);
-
     let mesh_instance = new Mesh(aux_matrix)
-    mesh_instance.plot(0.1)
+    mesh_instance.plot(0.2)
     // mesh_instance.print()
 
     let buffers = WebGLHelper.initBuffers(gl, program, [{
@@ -113,6 +88,7 @@ export function displayMesh(){
 
         next_control_Point:function(){ mesh_instance.update_to_next_current_point() },
         prev_control_Point:function(){ mesh_instance.update_to_prev_current_point() },
+
         t_x_pos:function(){ controls.t_x = 0.05; controls.t_y = 0; controls.t_z = 0; animate() },
         t_x_neg:function(){ controls.t_x = -0.05; controls.t_y = 0; controls.t_z = 0; animate() },
         t_y_pos:function(){ controls.t_x = 0; controls.t_y = 0.05; controls.t_z = 0; animate() },
@@ -132,7 +108,10 @@ export function displayMesh(){
     function animate()
     {
         mesh_instance.traslade_current_point(controls.t_x, controls.t_y, controls.t_z)
-        mesh_instance.plot(0.1)
+        mesh_instance.rotate_x(controls.r_x)
+        mesh_instance.rotate_y(controls.r_y)
+        mesh_instance.rotate_z(controls.r_z)
+        mesh_instance.plot(0.2)
 
         let buffers = WebGLHelper.initBuffers(gl, program, [{
             name: 'coordinates',
@@ -144,66 +123,21 @@ export function displayMesh(){
             data: mesh_instance.c_out
         }])
 
-        // let id_mat = new THREE.Matrix4().identity()
-        let rx  = new THREE.Matrix4().makeRotationX(controls.r_x * Math.PI / 180)
-        let ry  = new THREE.Matrix4().makeRotationY(controls.r_y * Math.PI / 180)
-        let rz  = new THREE.Matrix4().makeRotationZ(controls.r_z * Math.PI / 180)
-
-        let ryz = new THREE.Matrix4().multiplyMatrices(ry, rz)
-        let rxyz = new THREE.Matrix4().multiplyMatrices(rx, ryz)
-        let id_mat = rxyz
+        let id_mat = new THREE.Matrix4().identity() // TODO: update later
 
         WebGLHelper.clear(gl, [1, 1, 1, 1])
         gl.uniformMatrix4fv(transformByLoc, false, id_mat.elements)
 
-        gl.drawArrays(gl.LINES, 0, mesh_instance.v_out.length)
+        gl.drawArrays(gl.LINES, 0, mesh_instance.v_out.length / 3)
+
+        controls.r_x = 0
+        controls.r_y = 0
+        controls.r_z = 0
+        controls.t_x = 0
+        controls.t_y = 0
+        controls.t_z = 0
     }
     animate()
-
-    // //Rotations
-    // let theta = [0, 0, 0]
-    // function animate(){
-    //     mesh_instance.traslade_current_point(controls.t_x, controls.t_y, controls.t_z)
-    //     mesh_instance.plot(0.1)
-    //
-    //     let buffers = WebGLHelper.initBuffers(gl, program, [{
-    //         name: 'coordinates',
-    //         size: 3,
-    //         data: mesh_instance.v_out
-    //     }, {
-    //         name: 'color',
-    //         size: 3,
-    //         data: mesh_instance.c_out
-    //     }])
-    //
-    //     theta[controls.axis] += .8
-    //
-    //     let rx  = new THREE.Matrix4().makeRotationX(controls.r_x * Math.PI / 180)
-    //     let ry  = new THREE.Matrix4().makeRotationY(controls.r_y * Math.PI / 180)
-    //     let rz  = new THREE.Matrix4().makeRotationZ(controls.r_z * Math.PI / 180)
-    //
-    //     // console.log('theta')
-    //     // console.log(theta)
-    //     // console.log('rx')
-    //     // console.log( rx.transpose() )
-    //     // console.log('ry')
-    //     // console.log( ry.transpose() )
-    //     // console.log('rz')
-    //     // console.log( rz.transpose() )
-    //     // setTimeout(() => { console.log("World!"); }, 5000);
-    //
-    //     let ryz = new THREE.Matrix4().multiplyMatrices(ry, rz)
-    //     let rxyz = new THREE.Matrix4().multiplyMatrices(rx, ryz)
-    //
-    //     WebGLHelper.clear(gl, [1, 1, 1, 1])
-    //     gl.uniformMatrix4fv(transformByLoc, false, rxyz.elements)
-    //
-    //     gl.drawArrays(gl.LINES, 0, mesh_instance.v_out.length)
-    //     // gl.drawArrays(gl.POINTS, 0, mesh_instance.v_out.length)
-    //
-    //     requestAnimationFrame(animate)
-    // }
-    // animate()
 
     let gui = new dat.GUI()
     document.querySelector('aside').appendChild(gui.domElement)
@@ -501,15 +435,9 @@ export function displayMultipleCubes(){
     let controls = {
         axis: 1,
         theta: 30,
-        // front: '#FF0000',
-        // back: '#00FF00',
-        // top: '#0000FF',
-        // bottom: '#FFFF00',
-        // left: '#FF00FF',
-        // right: '#00FFFF'
     }
 
-    function instantiate(i, thetaIncrement, scaleBy, translateTo){
+    function instantiate(thetaIncrement, scaleBy, translateTo){
         theta[controls.axis] += .2
 
         let rx = new THREE.Matrix4().makeRotationX(theta[0] * Math.PI / 180)
@@ -531,55 +459,19 @@ export function displayMultipleCubes(){
     let theta = [0, 0, 0]
     WebGLHelper.clear(gl, [1, 1, 1, 1])
     function animate() {
-        instantiate(0, 0.8, [.9, .9, .9], [0, 0, 0])
-        instantiate(1, 1, [.3, .3, .3], [-.7, -.7, .4])
-        instantiate(2, 1.5, [.3, .6, .3], [.6, .6, .4])
-        instantiate(3, 0.8, [.2, .2, .2], [-.6, .7, -.4])
-        instantiate(3, 0.8, [.2, .6, .1], [.6, -.6, .1])
+        instantiate(0.8, [.9, .9, .9], [0, 0, 0])
+        instantiate(1, [.3, .3, .3], [-.7, -.7, .4])
+        instantiate(1.5, [.3, .6, .3], [.6, .6, .4])
+        instantiate( 0.8, [.2, .2, .2], [-.6, .7, -.4])
+        instantiate( 0.8, [.2, .6, .1], [.6, -.6, .1])
 
         requestAnimationFrame(animate)
-        // setNewColor()
     }
     animate()
 
     let gui = new dat.GUI()
     document.querySelector('aside').appendChild(gui.domElement)
     gui.add(controls, 'axis', { x: 0, y: 1, z: 2 })
-
-    // let sides = gui.addFolder('sides')
-    // sides.addColor(controls, 'front')
-    // sides.addColor(controls, 'back')
-    // sides.addColor(controls, 'top')
-    // sides.addColor(controls, 'bottom')
-    // sides.addColor(controls, 'left')
-    // sides.addColor(controls, 'right')
-    // sides.open()
-
-    // // Function for setting color of cube
-    // function setNewColor(){
-    //     let newColors = cube.colors
-    //
-    //     newColors[0] = WebGLHelper.getColorFromHex(controls.front)
-    //     newColors[1] = WebGLHelper.getColorFromHex(controls.back)
-    //     newColors[2] = WebGLHelper.getColorFromHex(controls.top)
-    //     newColors[3] = WebGLHelper.getColorFromHex(controls.bottom)
-    //     newColors[4] = WebGLHelper.getColorFromHex(controls.left)
-    //     newColors[5] = WebGLHelper.getColorFromHex(controls.right)
-    //
-    //     cube.colors = newColors
-    //     // cube.fixColors()
-    //     cube.fixColors
-    //
-    //     WebGLHelper.initBuffers(gl, program, [{
-    //         name: 'coordinates',
-    //         size: 3,
-    //         data: cube.v_out
-    //     }, {
-    //         name: 'color',
-    //         size: 3,
-    //         data: cube.c_out
-    //     }])
-    // }
 }
 
 export function displaySphere() {
@@ -652,13 +544,13 @@ export function displaySphere() {
 // displayCubeIndexed()
 // displayMultipleCubes()
 // displayCubeOperations()
-displaySphere()
-// displayMesh()
+// displaySphere()
+displayMesh()
 
 // Notes
 // * WebGL coordinates: https://www.tutorialspoint.com/webgl/webgl_basics.htm
 
-// [Matlab Code] Transformations - Exercise 1
+// // [Matlab Code] Transformations - Exercise 1
 // tm = [1 0 0 -20; 0 1 0 -30; 0 0 1 30; 0 0 0 1]
 // rm = [1 0 0 0; 0 cos(45 * pi / 180) -sin(45 * pi / 180) 0; 0 sin(45 * pi / 180) cos(45 * pi / 180) 0; 0 0 0 1]
 // trans_m = rm * tm
