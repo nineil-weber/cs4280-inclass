@@ -92,6 +92,7 @@ export function displayThreeHelloWorld(){
     }
 
     function animate() {
+        // They came from the sphere Equations
         camera.position.x = controls.radius * Math.sin(controls.theta) * Math.cos(controls.phi)
         camera.position.y = controls.radius * Math.cos(controls.theta)
         camera.position.z = controls.radius * Math.sin(controls.theta) * Math.sin(controls.phi)
@@ -209,6 +210,6 @@ export function displayCubeScene(){
 }
 
 // Main
-displayThreeHelloWorld()
+// displayThreeHelloWorld()
 // displayAnimatedCube()
-// displayCubeScene()
+displayCubeScene()
