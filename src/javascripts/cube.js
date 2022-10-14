@@ -48,4 +48,16 @@ export class Cube {
     this.indices.push(a, b, c)
     this.indices.push(a, c, d)
   }
+
+  fixColors(nc) // for Activity 05 solution
+  {
+    this.colors=nc
+
+    this.c_out = []
+    for(let c of this.colors){
+      for(let i = 0; i < 6; i++){
+        this.c_out.push(c[0], c[1], c[2])
+      }
+    }
+  }
 }
