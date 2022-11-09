@@ -83,7 +83,7 @@ export function displayTexturedScene(){
         }),
         crate_normal: texLoader.load('./images/crate0_normal.png', function(){
             renderer.render(scene, camera)
-        }),
+        }), // Crate images will be combined
         earth: texLoader.load('./images/earth.jpg', function(){
             renderer.render(scene, camera)
         }),
@@ -114,31 +114,31 @@ export function displayTexturedScene(){
     cube.name = 'crate'
     scene.add(cube)
     cube.material = new THREE.MeshStandardMaterial(cube.materialParams)
-    cube.material.map = textures[cube.name]
-    cube.material.bumpMap = textures['crate_bump']
-    cube.material.bumpScale = .6
-    cube.material.normalMap = textures['crate_normal']
+    cube.material.map = textures[cube.name] // Step 1
+    cube.material.bumpMap = textures['crate_bump'] // Step 2 - Give 3D effect
+    cube.material.bumpScale = .6 // Step 3
+    cube.material.normalMap = textures['crate_normal'] // Step 4
 
-    cube = new THREE.Mesh(geometry)
-    cube.materialParams = {}
-    cube.position.set(200, 50, 100)
-    cube.name = 'somePattern'
-    scene.add(cube)
-    cube.material = new THREE.MeshStandardMaterial(cube.materialParams)
-    cube.material.map = textures[cube.name]
-
-
-    // Adding the floor
-    geometry = new THREE.PlaneGeometry(500, 300)
-    let plane = new THREE.Mesh(geometry)
-    plane.materialParams = { side: THREE.DoubleSide }
-    plane.rotateX(Math.PI / 2)
-    plane.name = 'floor'
-    scene.add(plane)
-    plane.material = new THREE.MeshStandardMaterial(plane.materialParams)
-    plane.material.map = textures[plane.name]
-
-
+    // cube = new THREE.Mesh(geometry)
+    // cube.materialParams = {}
+    // cube.position.set(200, 50, 100)
+    // cube.name = 'somePattern'
+    // scene.add(cube)
+    // cube.material = new THREE.MeshStandardMaterial(cube.materialParams)
+    // cube.material.map = textures[cube.name]
+    //
+    //
+    // // Adding the floor
+    // geometry = new THREE.PlaneGeometry(500, 300)
+    // let plane = new THREE.Mesh(geometry)
+    // plane.materialParams = { side: THREE.DoubleSide }
+    // plane.rotateX(Math.PI / 2)
+    // plane.name = 'floor'
+    // scene.add(plane)
+    // plane.material = new THREE.MeshStandardMaterial(plane.materialParams)
+    // plane.material.map = textures[plane.name]
+    //
+    //
     // Adding a wall
     geometry = new THREE.BoxGeometry(500, 100, 5)
     let wall = new THREE.Mesh(geometry)
@@ -148,21 +148,21 @@ export function displayTexturedScene(){
     scene.add(wall)
     wall.material = new THREE.MeshStandardMaterial(wall.materialParams)
     wall.material.map = textures[wall.name]
-
-    //Adding google earth
-    geometry = new THREE.SphereGeometry(50, 40, 40)
-    let sphere = new THREE.Mesh(geometry)
-    sphere.materialParams = {}
-    sphere.name = 'earth'
-    sphere.position.set(200, 50, -50)
-    scene.add(sphere)
-    sphere.material = new THREE.MeshStandardMaterial(sphere.materialParams)
-    sphere.material.map = textures[sphere.name]
+    //
+    // //Adding google earth
+    // geometry = new THREE.SphereGeometry(50, 40, 40)
+    // let sphere = new THREE.Mesh(geometry)
+    // sphere.materialParams = {}
+    // sphere.name = 'earth'
+    // sphere.position.set(200, 50, -50)
+    // scene.add(sphere)
+    // sphere.material = new THREE.MeshStandardMaterial(sphere.materialParams)
+    // sphere.material.map = textures[sphere.name]
 
     // Adding light sources
-    let ambientLight = new THREE.AmbientLight(0x333333)
-    let directionalLight = new THREE.DirectionalLight(0x777777)
-    let pointLight = new THREE.PointLight(0x999999)
+    let ambientLight = new THREE.AmbientLight(0x333333) // black
+    let directionalLight = new THREE.DirectionalLight(0x777777) // Gray
+    let pointLight = new THREE.PointLight(0x999999) // Light gray
 
     scene.add(ambientLight)
     scene.add(directionalLight)

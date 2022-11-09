@@ -7,6 +7,30 @@ import { MTLLoader, OBJLoader} from 'three-obj-mtl-loader'
 import { Water } from 'three/examples/jsm/objects/Water2'
 import { TextureLoader } from 'three'
 
+function get_curve()
+{
+    let path = new THREE.CurvePath() // https://threejs.org/docs/#api/en/extras/core/CurvePath
+
+    path.add(new THREE.LineCurve3(
+        new THREE.Vector3(0, 0, 0),
+        new THREE.Vector3(-1, 0, 0),
+    ))
+
+    path.add(new THREE.LineCurve3(
+        new THREE.Vector3(-1, 0, 0),
+        new THREE.Vector3(-1, 1, 0),
+    ))
+
+    path.add(new THREE.CubicBezierCurve3(
+        new THREE.Vector3(-1, 1, 0),
+        new THREE.Vector3(-.5, .5, 0),
+        new THREE.Vector3(1.5, 1.5, 0),
+        new THREE.Vector3(0, 0, 0),
+    ))
+
+    return path
+}
+
 export function displayOcean() {
     let canvas = document.querySelector('#webgl-scene')
     let scene = new THREE.Scene()
@@ -19,18 +43,19 @@ export function displayOcean() {
     let axes = new THREE.AxesHelper(10)
     scene.add(axes)
 
-    let clock = new THREE.Clock()
+    let clock = new THREE.Clock() // Object to keep track of time
+    // https://threejs.org/docs/#api/en/core/Clock
 
     let uniforms = {
         iGlobalTime : {
             type: 'f',
-            value: 0.1
+            value: 0.1 // Change as you animate
         },
         iResolution: {
             type: 'v2',
             value: new THREE.Vector2(canvas.clientWidth, canvas.clientHeight)
         }
-    }
+    } // Variables came from f_shared_water.glsl
 
     camera.position.set(20, 10, 20)
 
@@ -48,7 +73,11 @@ export function displayOcean() {
     scene.add(water)
 
     function animate(){
-        uniforms.iGlobalTime.value += clock.getDelta()
+        uniforms.iGlobalTime.value += clock.getDelta() // Get the seconds passed since the time .oldTime was set and sets .oldTime to the current time.
+        // uniforms.iGlobalTime.value += 0.0001
+        // uniforms.iGlobalTime.value = clock.getDelta()
+        console.log('value: ' + uniforms.iGlobalTime.value) // to print
+        // console.log('delta: ' + clock.getDelta())
         renderer.render(scene, camera)
         requestAnimationFrame(animate)
     }
@@ -201,9 +230,11 @@ export function displayTexturedScene(){
     scene.add(pointLight)
     scene.add(spotLight)
 
-    let rayCaster = new THREE.Raycaster() // TODO: What is doing?
+    let rayCaster = new THREE.Raycaster() // Find intersections with objects
     let pointerAt = new THREE.Vector2()
     canvas.addEventListener('pointerup', e => {
+        // alert('clicked')
+
         let rect = e.target.getBoundingClientRect()
 
         // x = (2u - w) /w
@@ -214,8 +245,14 @@ export function displayTexturedScene(){
         rayCaster.setFromCamera(pointerAt, camera)
         let intersects = rayCaster.intersectObjects([wall, plane, crate, cube, sphere])
         for(let intersect of intersects){
-            let obj = intersect.object
+            // console.log( intersect.object.name )
+
+            // // change color
+            // let obj = intersect.object
             // obj.material = new THREE.MeshBasicMaterial({color: 0xFF00FF})
+            // break
+
+            let obj = intersect.object
             obj.rotation.x += 2
             obj.rotation.z += 2
             break
@@ -237,6 +274,69 @@ export function displayTexturedScene(){
     animate()
 }
 
+export function display_scene_path() {
+    let canvas = document.querySelector('#webgl-scene')
+    let scene = new THREE.Scene()
+    let renderer = new THREE.WebGLRenderer({canvas})
+    let camera = new THREE.PerspectiveCamera(45, canvas.clientWidth / canvas.clientWidth, .1, 1000)
+
+    renderer.setSize(canvas.clientWidth, canvas.clientHeight)
+    renderer.setClearColor(0x000000)
+
+    let axes = new THREE.AxesHelper(10)
+    scene.add(axes)
+
+    let cube = new THREE.Mesh( new THREE.BoxGeometry(.15, .15, .15), new THREE.MeshNormalMaterial() )
+    scene.add(cube)
+
+    let path = get_curve()
+    console.log('curves: ' + path.curves)
+    console.log('curves[0]: ' + path.curves[0])
+    console.log('curves[0][0]: ' + path.curves[0][0])
+    let points = path.curves.reduce((p, d) => [...p, ...d.getPoints(40)], [])
+    // https://www.w3schools.com/jsref/jsref_reduce.asp
+    // https://thecodebarbarian.com/javascript-reduce-in-5-examples.html
+
+    scene.add(new THREE.Line(
+        new THREE.BufferGeometry().setFromPoints(points),
+        new THREE.LineBasicMaterial({color: 0xFFFF00})
+    ))
+
+    let cameraControls = new OrbitControls(camera, renderer.domElement)
+    cameraControls.addEventListener("change", function(){
+        renderer.render(scene, camera)
+    })
+
+    camera.position.set(2, -1, 3)
+
+    camera.lookAt(scene.position)
+
+    let fraction = 0
+    // const up = new THREE.Vector3(0, 1, 0)
+    // const axis = new THREE.Vector3()
+
+    function animate(){
+        let new_position = path.getPoint( fraction )
+        // let tangent = path.getTangent( fraction )
+        cube.position.copy( new_position )
+
+        // axis.crossVectors( up, tangent ).normalize()
+        // let angle = Math.acos( up.dot(tangent) )
+        // cube.quaternion.setFromAxisAngle( axis, angle )
+
+        renderer.render(scene, camera)
+        fraction += 0.001
+        if (fraction > 1)
+            fraction = 0
+
+        cameraControls.update()
+        requestAnimationFrame(animate)
+    }
+
+    animate()
+}
+
 //Main
-// displayOcean()
-displayTexturedScene()
+// displayOcean() // Ocean animation
+// displayTexturedScene() // Adding clicks on objects
+display_scene_path() // Move object around a path

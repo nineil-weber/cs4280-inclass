@@ -12,7 +12,7 @@ document.querySelector('#std_name').innerHTML = `<strong>${std_name}</strong>`
 import vs_script from "../shaders/vertex-color.glsl"
 import fs_script from "../shaders/fragment-color.glsl"
 
-// JavaScript
-import { displayScene} from './week12-physics'
-displayScene()
+// // JavaScript
+// import { displayScene} from './week13'
+// displayScene()
 

@@ -324,7 +324,7 @@ export function displayTexturedScene(){
     let cube = new THREE.Mesh(geometry)
     cube.materialParams = {}
     cube.position.set(0, 50, 0)
-    cube.name = 'checkerboard'
+    cube.name = 'somePattern' // sinusoidal | checkerboard | somePattern
     scene.add(cube)
     cube.castShadow = true
     cube.material = new THREE.MeshStandardMaterial(cube.materialParams)
@@ -412,7 +412,7 @@ export function displayTexturedScene(){
 }
 
 // Main
-displaySolar()
-// displayCubes() // Adding normals?
+// displaySolar()
+displayCubes() // Create material with shaders
 // displayCity() // Adding interactive keys
-// displayTexturedScene() // Water texture to Grass?
+// displayTexturedScene() // Water texture to Grass
