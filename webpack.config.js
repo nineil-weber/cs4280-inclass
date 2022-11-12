@@ -5,6 +5,7 @@ module.exports = {
   entry: {
     main: './src/javascripts/main.js',
     week12: './src/javascripts/week12.js',
+    week12b: './src/javascripts/week12b.js',
     week11b: './src/javascripts/week11b.js',
     week11: './src/javascripts/week11.js',
     week10: './src/javascripts/week10.js',
