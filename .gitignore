@@ -49,3 +49,14 @@ testem.log
 .DS_Store
 Thumbs.db
 
+dist/models/pokemon/charizar.mtl
+dist/models/pokemon/charizar.obj
+dist/models/pokemon/textures/ala.png
+dist/models/pokemon/textures/cabeza.png
+dist/models/pokemon/textures/cola.png
+dist/models/pokemon/textures/diente.png
+dist/models/pokemon/textures/fullna.png
+dist/models/pokemon/textures/lengua.png
+dist/models/pokemon/textures/llama.png
+dist/models/pokemon/textures/pecho.png
+dist/models/pokemon/textures/pie.png
