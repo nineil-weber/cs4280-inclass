@@ -222,7 +222,54 @@ function keyUp(event){
 window.addEventListener('keydown', keyDown);
 window.addEventListener('keyup', keyUp);
 
-displayWork()
+function sum_loop(arr)
+{
+    let sum = 0;
+    for (const val of arr) {
+        sum = sum + val;
+    }
+    return sum;
+}
+
+function sum(arr)
+{
+    const reducer = (sum, val) => sum + val;
+    const initialValue = 0;
+    return arr.reduce(reducer, initialValue);
+}
+
+function sum_even(arr)
+{
+    // const reducer = (sum, val) =>  (val % 2 == 0) ? (sum + val) : sum; // https://www.codingem.com/javascript-if-else-on-one-line/
+    const reducer = (sum, val) =>
+    {
+        if (val % 2 == 0)
+            return (sum + val)
+        else
+            return sum;
+    }
+    const initialValue = 0;
+    return arr.reduce(reducer, initialValue);
+}
+
+function test_reducer()
+{
+    // sum_loop
+    let sl = sum([1, 3, 4, 2]);
+    console.log('sum_loop: ' + sl);
+
+    // sum
+    let s = sum([1, 3, 4, 2]);
+    console.log('sum: ' + s);
+
+    // sum_even
+    let se = sum_even([1, 3, 4, 2]);
+    console.log('sum_even: ' + se);
+}
+
+//main
+// displayWork()
+test_reducer()
 
 // [Relevant links]
 // https://dev.to/ritza/building-a-3d-obstacle-avoiding-game-with-threejs-19da
