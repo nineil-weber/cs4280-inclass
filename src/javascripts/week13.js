@@ -76,14 +76,14 @@ export function displayWork(){
     let cnt = 0
     let box_size = 0.5
 
-    let u = []
+    let u = [] // array to store random generated asteroids
     let q_ast= [] // this array will help us to simulate a queue
 
     let box_obj = []
 
+    // Flags
     let move_on = false
     let computed_bounding_boxes =false
-
 
     function intersectsBoxes( box_ast, minx, miny, minz, maxx, maxy, maxz ) {
         // https://developer.mozilla.org/en-US/docs/Games/Techniques/3D_collision_detection
@@ -268,8 +268,8 @@ function test_reducer()
 }
 
 //main
-// displayWork()
-test_reducer()
+displayWork()
+// test_reducer()
 
 // [Relevant links]
 // https://dev.to/ritza/building-a-3d-obstacle-avoiding-game-with-threejs-19da
