@@ -255,7 +255,7 @@ function sum_even(arr)
 function test_reducer()
 {
     // sum_loop
-    let sl = sum([1, 3, 4, 2]);
+    let sl = sum_loop([1, 3, 4, 2]);
     console.log('sum_loop: ' + sl);
 
     // sum
